@@ -18,7 +18,6 @@ from rtp_llm.config.py_config_modules import PyEnvConfigs, StaticConfig
 from rtp_llm.config.task_type import TaskType
 from rtp_llm.distribute.gang_server import GangServer
 from rtp_llm.distribute.worker_info import g_parallel_info
-from rtp_llm.embedding.embedding_endpoint import EmbeddingEndpoint
 from rtp_llm.lora.lora_manager import LoraManager
 from rtp_llm.metrics import AccMetrics, GaugeMetrics, kmonitor
 from rtp_llm.model_factory import ModelFactory
@@ -62,7 +61,6 @@ class BackendServer(object):
             kmonitor.init()
         self.model = None
         self._openai_endpoint = None
-        self._embedding_endpoint = None
         self.py_env_configs = py_env_configs
         self.dp_rank = g_parallel_info.dp_rank
         self.dp_size = g_parallel_info.dp_size
@@ -77,10 +75,8 @@ class BackendServer(object):
             self.model: AsyncModel = ModelFactory.create_from_env()
             if (
                 self.model is not None
-                and self.model.task_type != TaskType.LANGUAGE_MODEL
+                and self.model.task_type == TaskType.LANGUAGE_MODEL
             ):
-                self._embedding_endpoint = EmbeddingEndpoint(self.model)
-            else:
                 self.backend_rpc_server_visitor = BackendRPCServerVisitor(
                     self.model.config
                 )
@@ -115,56 +111,8 @@ class BackendServer(object):
         return True
 
     @property
-    def is_embedding(self):
-        return self._embedding_endpoint is not None
-
-    @property
     def role_type(self) -> str:
         return self.model.role_type
-
-    async def embedding(self, request: Dict[str, Any], raw_request: Request):
-        try:
-            start_time = time.time()
-            if isinstance(request, str):
-                request = json.loads(request)
-            kmonitor.report(
-                AccMetrics.QPS_METRIC, 1, {"source": request.get("source", "unknown")}
-            )
-            request[request_id_field_name] = self._global_controller.increment()
-        except Exception as e:
-            return self._handle_exception(request, e)
-
-        try:
-            assert (
-                self._embedding_endpoint is not None
-            ), "embedding pipeline should not be None"
-            result, logable_result = await self._embedding_endpoint.handle(request)
-            # do not log result since too big
-            if logable_result is not None:
-                self._access_logger.log_success_access(request, logable_result)
-            end_time = time.time()
-            kmonitor.report(
-                GaugeMetrics.LANTENCY_METRIC, (end_time - start_time) * 1000
-            )
-            kmonitor.report(
-                AccMetrics.SUCCESS_QPS_METRIC,
-                1,
-                {"source": request.get("source", "unknown")},
-            )
-            usage = result.get("usage", {})
-            if not isinstance(usage, dict):
-                usage = {}
-            return ORJSONResponse(result, headers={USAGE_HEADER: json.dumps(usage)})
-        except BaseException as e:
-            return self._handle_exception(request, e)
-        finally:
-            self._global_controller.decrement()
-
-    async def similarity(self, request: Dict[str, Any], raw_request: Request):
-        return await self.embedding(request, raw_request)
-
-    async def classifier(self, request: Dict[str, Any], raw_request: Request):
-        return await self.embedding(request, raw_request)
 
     def _handle_exception(self, request: Dict[str, Any], e: BaseException):
         exception_json = format_exception(e)

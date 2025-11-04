@@ -27,11 +27,13 @@ namespace rtp_llm {
 
 class KVCacheGroup {
 public:
+    // TODO, KVCacheSpec 也包含了layer ids.
     KVCacheGroup(const LayerIdsType& layer_ids, std::shared_ptr<KVCacheSpec> group_spec, BlockPoolPtr block_pool):
         layer_ids_(layer_ids),
         group_spec_(std::move(group_spec)),
         block_pool_(block_pool),
-        block_cache_(block_pool_->blockCache()) {}
+        block_cache_(block_pool_->blockCache()),
+        seq_size_per_block_(group_spec_->seq_size_per_block) {}
 
     virtual ~KVCacheGroup() = default;
 
@@ -52,7 +54,10 @@ public:
 
     virtual size_t freeBlockNums() const     = 0;
     virtual bool   evict(int need_evict_len) = 0;
-    virtual int    seqSizePerBlock() const   = 0;
+
+    int seqSizePerBlock() const {
+        return seq_size_per_block_;
+    }
 
 protected:
     LayerIdsType                 layer_ids_;

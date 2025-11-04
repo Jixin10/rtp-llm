@@ -30,7 +30,6 @@ public:
 
     size_t freeBlockNums() const override;
     bool   evict(int need_evict_len) override;
-    int    seqSizePerBlock() const override;
 
 private:
 };

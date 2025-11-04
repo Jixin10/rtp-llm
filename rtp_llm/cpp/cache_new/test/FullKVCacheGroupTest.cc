@@ -19,16 +19,19 @@ protected:
 
 // ==================== 基础功能测试 ====================
 
-TEST_F(FullKVCacheGroupTest, AllocateTest) {
+TEST_F(FullKVCacheGroupTest, NeedBlocksNumTest) {
     // 测试构造函数
-    // BlockPoolPtr
-
-    // const LayerIdsType&           layer_ids,
-    //                  std::shared_ptr<KVCacheSpec>  group_spec,
-    //                  BlockPoolPtr                  block_pool
     auto block_pool = createBlockPool();
     block_pool->init();
-    FullKVCacheGroup group1({}, nullptr, block_pool);
+
+    auto spec                = make_shared<KVCacheSpec>();
+    spec->seq_size_per_block = 4;
+
+    FullKVCacheGroup group1({}, spec, block_pool);
+    ASSERT_EQ(1, group1.needBlocksNum(10, 1));
+    ASSERT_EQ(1, group1.needBlocksNum(10, 5));
+    ASSERT_EQ(1, group1.needBlocksNum(1, 0));
+    ASSERT_EQ(1, group1.needBlocksNum(2, 1));
 }
 
 }  // namespace test

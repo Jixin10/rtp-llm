@@ -6,7 +6,7 @@ namespace rtp_llm {
 bool FullKVCacheGroup::init() {
     auto layer_tensors = block_pool_->layerCacheBase();
 
-    // TODO(chanyin): layer_ids might not be set in sequence
+    // TODO(chanyin): layer_ids might not be set in sequence, move to basic class
     for (int i = 0; i < layer_ids_.size(); ++i) {
         gloabl_layer_to_kv_tensors[layer_ids_[i]]  = layer_tensors[i];
         gloabl_layer_to_local_layer[layer_ids_[i]] = i;
@@ -87,10 +87,6 @@ void FullKVCacheGroup::removeSkippedBlocks(BlockIndicesType& block_indices) {}
 
 size_t FullKVCacheGroup::freeBlockNums() const {
     return block_pool_->freeBlockNums();
-}
-
-int FullKVCacheGroup::seqSizePerBlock() const {
-    return static_cast<int>(group_spec_->seq_size_per_block);
 }
 
 bool FullKVCacheGroup::evict(int need_evict_len) {

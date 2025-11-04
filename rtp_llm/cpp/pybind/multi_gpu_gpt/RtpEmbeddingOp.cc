@@ -58,7 +58,7 @@ void RtpEmbeddingOp::initGrpcServer(const EngineInitParams               maga_in
                                     py::object                           py_render,
                                     py::object                           py_handler,
                                     std::shared_ptr<MultimodalProcessor> mm_processor) {
-    auto embedding_rpc_port = maga_init_params.gpt_init_parameter.model_rpc_port_ + 1000;
+    auto embedding_rpc_port = maga_init_params.gpt_init_parameter.embedding_rpc_port_;
     RTP_LLM_LOG_INFO(" embedding_rpc_port %ld", embedding_rpc_port);
     auto role_type = maga_init_params.gpt_init_parameter.role_type_;
     // NOTE: ip/ip段可自定义为所需范围。

@@ -10,22 +10,10 @@ grpc::Status EmbeddingRpcServiceImpl::decode(grpc::ServerContext*    context,
                                              EmbeddingOutputPB*      response) {
     int64_t request_id = request->request_id();
     RTP_LLM_LOG_INFO("Received embedding request id: %d", request_id);
-
-    std::vector<int32_t> token_ids(request->token_ids().begin(), request->token_ids().end());
-
-    std::vector<int32_t> token_type_ids(request->token_type_ids().begin(), request->token_type_ids().end());
-
-    std::vector<int32_t> input_lengths(request->input_lengths().begin(), request->input_lengths().end());
-
-    for (int i = 0; i < token_ids.size(); ++i) {
-        RTP_LLM_LOG_INFO("token_ids[%d]: %d", i, token_ids[i]);
-    }
-    for (int i = 0; i < token_type_ids.size(); ++i) {
-        RTP_LLM_LOG_INFO("token_type_ids[%d]: %d", i, token_type_ids[i]);
-    }
-
+    std::vector<int32_t>         token_ids(request->token_ids().begin(), request->token_ids().end());
+    std::vector<int32_t>         token_type_ids(request->token_type_ids().begin(), request->token_type_ids().end());
+    std::vector<int32_t>         input_lengths(request->input_lengths().begin(), request->input_lengths().end());
     std::vector<MultimodalInput> multimodal_inputs;
-
     for (const auto& pb_feature : request->multimodal_features()) {
         MultimodalInput feature(pb_feature.multimodal_url(), torch::empty(1), pb_feature.multimodal_type());
         multimodal_inputs.emplace_back(std::move(feature));
@@ -41,6 +29,7 @@ grpc::Status EmbeddingRpcServiceImpl::decode(grpc::ServerContext*    context,
     }
     std::shared_ptr<EmbeddingOutput> embedding_output = embedding_engine_->decode(embedding_input);
     py::gil_scoped_acquire           acquire;
+    // batch_output = handler.attr("post_process")(formated_request, batch_output);
     if (embedding_output->output.isTensor) {
         response->set_output_is_tensor(true);
         QueryConverter::transTensorPB(response->mutable_output_t(), embedding_output->output.t.value());

@@ -15,6 +15,7 @@ import rtp_llm.cpp.model_rpc.proto.model_rpc_service_pb2_grpc as pb2_grpc
 from rtp_llm.async_decoder_engine.embedding.interface import EngineInputs, EngineOutputs
 from rtp_llm.config.exceptions import ExceptionType, FtRuntimeException
 from rtp_llm.config.gpt_init_model_parameters import GptInitModelParameters
+from rtp_llm.distribute.worker_info import g_worker_info
 from rtp_llm.frontend.tokenizer_factory.tokenizers import BaseTokenizer
 from rtp_llm.models.downstream_modules.utils import create_custom_module
 
@@ -71,10 +72,19 @@ def tensor_pb_to_torch(tensor_pb) -> Optional[torch.Tensor]:
 
 
 class EmbeddingEndpoint(object):
-    def __init__(self, model_config: GptInitModelParameters, tokenizer: BaseTokenizer):
+    def __init__(
+        self,
+        config: GptInitModelParameters,
+        tokenizer: BaseTokenizer,
+        address: Optional[str] = None,
+    ):
         self.renderer = create_custom_module(
-            model_config.task_type, model_config, tokenizer
+            config.task_type, config, tokenizer
         ).renderer
+        # 创建到服务器的连接
+
+        self.address = f"localhost:{g_worker_info.embedding_rpc_server_port}"
+        logging.info(f"embedding endpoint connect to rpc addresses: {self.address}")
 
     async def handle(
         self, request: Dict[str, Any]
@@ -105,8 +115,7 @@ class EmbeddingEndpoint(object):
         return output
 
     def decode_grpc(self, input: EngineInputs, output: EngineOutputs):
-        # TODO(wln): fix magic number
-        channel = grpc.insecure_channel("localhost:27001")
+        channel = grpc.insecure_channel(self.address)
         stub = pb2_grpc.EmbeddingRpcServiceStub(channel)
         multimodal_features = []
         for feature in input.multimodal_inputs:

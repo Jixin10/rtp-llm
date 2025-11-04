@@ -468,6 +468,7 @@ class GptInitParameter:
     mm_sep_tokens: list[list[int]]
     model_name: str
     model_rpc_port: int
+    embedding_rpc_port: int
     model_specific_config: ModelSpecificConfig
     moe_config: MoeConfig
     moe_inter_padding_size: int

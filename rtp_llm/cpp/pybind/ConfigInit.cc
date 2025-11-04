@@ -396,7 +396,9 @@ void register_cache_store_config(pybind11::module& m) {
 // SchedulerConfig
 void register_scheduler_config(pybind11::module& m) {
     pybind11::class_<SchedulerConfig>(m, "SchedulerConfig")
-        .def(pybind11::init<bool, bool>(), pybind11::arg("use_batch_decode_scheduler") = false, pybind11::arg("use_gather_batch_scheduler") = false)
+        .def(pybind11::init<bool, bool>(),
+             pybind11::arg("use_batch_decode_scheduler") = false,
+             pybind11::arg("use_gather_batch_scheduler") = false)
         .def("to_string", &SchedulerConfig::to_string)
         .def("update_from_env", &SchedulerConfig::update_from_env_for_test)
         .def_readwrite("use_batch_decode_scheduler", &SchedulerConfig::use_batch_decode_scheduler)
@@ -436,9 +438,7 @@ void register_fifo_scheduler_config(pybind11::module& m) {
 // MiscellaneousConfig
 void register_misc_config(pybind11::module& m) {
     pybind11::class_<MiscellaneousConfig>(m, "MiscellaneousConfig")
-        .def(pybind11::init<bool, std::string>(),
-             pybind11::arg("disable_pdl") = true,
-             pybind11::arg("aux_string")  = "")
+        .def(pybind11::init<bool, std::string>(), pybind11::arg("disable_pdl") = true, pybind11::arg("aux_string") = "")
         .def("to_string", &MiscellaneousConfig::to_string)
         .def("update_from_env", &MiscellaneousConfig::update_from_env_for_test)
         .def_readwrite("disable_pdl", &MiscellaneousConfig::disable_pdl)
@@ -644,6 +644,7 @@ void registerGptInitParameter(py::module m) {
     DEF_PROPERTY(dp_tp_nccl_port, dp_tp_nccl_port_)                                                                    \
     DEF_PROPERTY(ffn_tp_nccl_port, ffn_tp_nccl_port_)                                                                  \
     DEF_PROPERTY(model_rpc_port, model_rpc_port_)                                                                      \
+    DEF_PROPERTY(embedding_rpc_port, embedding_rpc_port_)                                                              \
     DEF_PROPERTY(http_port, http_port_)                                                                                \
     DEF_PROPERTY(tp_size, tp_size_)                                                                                    \
     DEF_PROPERTY(tp_rank, tp_rank_)                                                                                    \

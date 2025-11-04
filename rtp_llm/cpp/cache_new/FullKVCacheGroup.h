@@ -7,18 +7,14 @@
 
 #include "rtp_llm/cpp/cache_new/KVCacheGroup.h"
 #include "rtp_llm/cpp/cache_new/BlockPool.h"
-#include "rtp_llm/cpp/cache_new/BlockCacheV1.h"
 #include "rtp_llm/cpp/core/Buffer.h"
 
 namespace rtp_llm {
 
 class FullKVCacheGroup: public KVCacheGroup {
 public:
-    FullKVCacheGroup(const std::vector<int>&       layer_ids,
-                     std::shared_ptr<KVCacheSpec>  group_spec,
-                     std::shared_ptr<BlockCacheV1> block_cache,
-                     BlockPoolPtr                  block_pool):
-        KVCacheGroup(layer_ids, group_spec, block_pool), block_cache_(block_cache) {}
+    FullKVCacheGroup(const LayerIdsType& layer_ids, std::shared_ptr<KVCacheSpec> group_spec, BlockPoolPtr block_pool):
+        KVCacheGroup(layer_ids, group_spec, block_pool) {}
 
     bool        init() override;
     void        alloc(CacheKeysType& cache_keys, BlockIndicesType& block_indices, int seq_len) override;
@@ -37,7 +33,6 @@ public:
     int    seqSizePerBlock() const override;
 
 private:
-    std::shared_ptr<BlockCacheV1> block_cache_;
 };
 
 }  // namespace rtp_llm

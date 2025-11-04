@@ -31,8 +31,7 @@ public:
     using CacheSnapshot = typename LRUCache<CacheKeyType, CacheItem>::CacheSnapshot;
 
 public:
-    explicit BlockCacheV1(size_t seq_size_per_block):
-        seq_size_per_block_(seq_size_per_block), lru_cache_(kCacheMaxCapacity) {}
+    explicit BlockCacheV1(): lru_cache_(kCacheMaxCapacity) {}
 
     MatchResult match(CacheKeyType cache_key);
 

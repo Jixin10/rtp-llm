@@ -27,8 +27,11 @@ namespace rtp_llm {
 
 class KVCacheGroup {
 public:
-    KVCacheGroup(const std::vector<int>& layer_ids, std::shared_ptr<KVCacheSpec> group_spec, BlockPoolPtr block_pool):
-        layer_ids_(layer_ids), group_spec_(std::move(group_spec)), block_pool_(block_pool) {}
+    KVCacheGroup(const LayerIdsType& layer_ids, std::shared_ptr<KVCacheSpec> group_spec, BlockPoolPtr block_pool):
+        layer_ids_(layer_ids),
+        group_spec_(std::move(group_spec)),
+        block_pool_(block_pool),
+        block_cache_(block_pool_->blockCache()) {}
 
     virtual ~KVCacheGroup() = default;
 
@@ -52,10 +55,10 @@ public:
     virtual int    seqSizePerBlock() const   = 0;
 
 protected:
-    std::vector<int>             layer_ids_;
+    LayerIdsType                 layer_ids_;
     std::shared_ptr<KVCacheSpec> group_spec_;
-    BlockCacheV1Ptr              block_cache_;
     BlockPoolPtr                 block_pool_;
+    BlockCacheV1Ptr              block_cache_;
 
     int                                    seq_size_per_block_;
     std::unordered_map<int, torch::Tensor> gloabl_layer_to_kv_tensors;

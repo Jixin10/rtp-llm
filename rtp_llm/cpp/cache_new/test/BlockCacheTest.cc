@@ -15,7 +15,7 @@ class BlockCacheV1Test: public ::testing::Test {
 protected:
     void SetUp() override {
         // 每个测试用例前初始化
-        cache_ = std::make_unique<BlockCacheV1>(4);  // seq_size_per_block=4
+        cache_ = std::make_unique<BlockCacheV1>();
     }
 
     void TearDown() override {
@@ -29,11 +29,11 @@ protected:
 
 TEST_F(BlockCacheV1Test, ConstructorTest) {
     // 测试构造函数
-    BlockCacheV1 cache1(2);
+    BlockCacheV1 cache1;
     EXPECT_TRUE(cache1.empty());
     EXPECT_EQ(cache1.size(), 0);
 
-    BlockCacheV1 cache2(8);
+    BlockCacheV1 cache2;
     EXPECT_TRUE(cache2.empty());
     EXPECT_EQ(cache2.size(), 0);
 }

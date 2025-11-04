@@ -30,9 +30,7 @@ bool SingleTypeKVCacheAllocator::init() {
 
     auto& spec = config_.layer_type_params[0];
 
-    auto block_cache = std::make_shared<BlockCacheV1>(static_cast<size_t>(config_.seq_size_per_block));
-
-    full_kv_cache_group_ = std::make_shared<FullKVCacheGroup>(layer_ids, spec, block_cache, block_pool_);
+    full_kv_cache_group_ = std::make_shared<FullKVCacheGroup>(layer_ids, spec, block_pool_);
 
     // if (cache_type == KVCacheType::MultiHeadLatentAttention) {
     //     // Use MLA specialization (fields remain default for now)

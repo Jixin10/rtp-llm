@@ -13,6 +13,9 @@ namespace rtp_llm {
 
 class LinearKVCacheGroup: public KVCacheGroup {
 public:
+    LinearKVCacheGroup(const LayerIdsType& layer_ids, std::shared_ptr<KVCacheSpec> group_spec, BlockPoolPtr block_pool):
+        KVCacheGroup(layer_ids, group_spec, block_pool) {}
+
     MatchResult match(CacheKeysType& cache_keys) override;
     void        alloc(CacheKeysType& cache_keys, BlockIndicesType& block_indices, int seq_len) override;
     void        insertIntoCache(CacheKeysType& cache_keys, BlockIndicesType& block_indices, bool is_resident) override;
@@ -24,7 +27,7 @@ private:
     int needBlocksNum(int seq_len, int current_blocks) const override;
 
 private:
-    int chunk_size;
+    int save_point;
 };
 
 using LinearKVCacheGroupPtr = std::shared_ptr<LinearKVCacheGroup>;

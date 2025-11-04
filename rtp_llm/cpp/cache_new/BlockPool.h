@@ -15,6 +15,7 @@
 #include "rtp_llm/cpp/core/Types.h"
 #include "rtp_llm/cpp/core/Buffer.h"
 #include "rtp_llm/cpp/cache_new/types.h"
+#include "rtp_llm/cpp/cache_new/BlockCacheV1.h"
 #include "rtp_llm/cpp/cache_new/MemoryLayoutStrategy.h"
 
 namespace rtp_llm {
@@ -31,6 +32,8 @@ public:
     ~BlockPool();
 
     bool init();
+
+    BlockCacheV1Ptr blockCache();
 
     // size_t totalBlocks() const;
     size_t freeBlockNums() const;
@@ -71,6 +74,8 @@ private:
     BlockRefCounter                        block_ref_counter_;
     rtp_llm::DeviceBase*                   device_;
     AllocationType                         atype_;
+
+    BlockCacheV1Ptr block_cache_;
 
     rtp_llm::BufferPtr cache_aligned_buffer_;
     void*              cache_base_ptr_  = nullptr;

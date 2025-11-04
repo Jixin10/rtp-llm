@@ -37,9 +37,15 @@ bool BlockPool::init() {
 
     initFreeBlocks();
 
+    block_cache_ = std::make_shared<BlockCacheV1>();
+
     RTP_LLM_LOG_INFO("block pool init success with layout: %s",
                      config_.layout == LAYER_FIRST ? "LAYER_FIRST" : "KV_FIRST");
     return true;
+}
+
+BlockCacheV1Ptr BlockPool::blockCache() {
+    return block_cache_;
 }
 
 void BlockPool::initFreeBlocks() {

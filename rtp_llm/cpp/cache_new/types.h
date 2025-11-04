@@ -20,6 +20,7 @@ typedef std::vector<CacheKeyType> CacheKeysType;
 typedef std::vector<BlockIdxType> BlockIndicesType;
 typedef std::vector<float>        LossType;
 typedef std::vector<LossType>     LossesType;
+typedef std::vector<int>          LayerIdsType;
 
 constexpr int32_t NULL_BLOCK_IDX = -1;
 

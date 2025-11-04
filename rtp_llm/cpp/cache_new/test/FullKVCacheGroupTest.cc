@@ -28,10 +28,10 @@ TEST_F(FullKVCacheGroupTest, NeedBlocksNumTest) {
     spec->seq_size_per_block = 4;
 
     FullKVCacheGroup group1({}, spec, block_pool);
-    ASSERT_EQ(1, group1.needBlocksNum(10, 1));
-    ASSERT_EQ(1, group1.needBlocksNum(10, 5));
+    ASSERT_EQ(2, group1.needBlocksNum(10, 1));
+    ASSERT_EQ(0, group1.needBlocksNum(10, 5));
     ASSERT_EQ(1, group1.needBlocksNum(1, 0));
-    ASSERT_EQ(1, group1.needBlocksNum(2, 1));
+    ASSERT_EQ(0, group1.needBlocksNum(2, 1));
 }
 
 }  // namespace test

@@ -35,6 +35,10 @@ public:
     void                    clear();
     void                    check() const;
 
+    int32_t reuseLen() const {
+        return reuse_len;
+    }
+
     std::string debugString() const;
 
 public:
@@ -50,6 +54,9 @@ public:
 
     // cache_keys and batch_block_id are not consistent at all times
     std::vector<std::vector<size_t>> cache_keys;
+
+private:
+    int32_t reuse_len{0};  // reuse cache key num
 };
 
 using BatchKVCacheResourcePtr = std::shared_ptr<BatchKVCacheResource>;

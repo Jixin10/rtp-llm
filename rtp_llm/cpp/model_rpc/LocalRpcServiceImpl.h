@@ -90,6 +90,12 @@ public:
         return local_server_->MemoryBlockCache(context, request, response);
     }
 
+    ::grpc::Status BroadcastAllTp(::grpc::ServerContext*           context,
+                                  const ::BroadcastAllTpRequestPB* request,
+                                  ::BroadcastAllTpResponsePB*      response) override {
+        return local_server_->BroadcastAllTp(context, request, response);
+    }
+
 protected:
     std::shared_ptr<LocalRpcServer> local_server_;
 };

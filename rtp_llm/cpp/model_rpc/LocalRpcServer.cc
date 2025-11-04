@@ -441,4 +441,13 @@ void LocalRpcServer::reportCacheStatusTime(int64_t request_begin_time_us) {
     return grpc::Status::OK;
 }
 
+::grpc::Status LocalRpcServer::BroadcastAllTp(::grpc::ServerContext*           context,
+                                              const ::BroadcastAllTpRequestPB* request,
+                                              ::BroadcastAllTpResponsePB*      response) {
+    RTP_LLM_LOG_DEBUG("receive broadcast all tp request from client: %s, request: [%s]",
+                      context->peer().c_str(),
+                      request->DebugString().c_str());
+    return grpc::Status(grpc::StatusCode::INTERNAL, "not implemented");
+}
+
 }  // namespace rtp_llm

@@ -63,6 +63,8 @@ void CudaGraphRunner::captureDecodeOneBatchSize(int bs) {
 
 void CudaGraphRunner::captureDecode() {
     RTP_LLM_LOG_INFO("Capture Decode Start");
+    capture_range_.clear();
+    capture_range_.push_back(48);
     int capture_range_size = capture_range_.size();
     for (int i = 0; i <= capture_range_size - 1; i++) {
         int           bs = capture_range_[i];
@@ -82,8 +84,8 @@ void CudaGraphRunner::captureDecode() {
             capture_mem_hold_.py_model_inputs_.attention_inputs.cu_seqlens.slice(0, 0, bs + 1);
         inputs.attention_inputs.prefix_lengths = capture_mem_hold_.py_model_inputs_.attention_inputs.prefix_lengths;
         inputs.attention_inputs.dtype          = capture_mem_hold_.py_model_inputs_.attention_inputs.dtype;
-        // inputs.attention_inputs.padding_offset =
-        //     capture_mem_hold_.py_model_inputs_.attention_inputs.padding_offset.slice(0, 0, bs * num_tokens_per_bs_);
+        inputs.attention_inputs.padding_offset =
+            capture_mem_hold_.py_model_inputs_.attention_inputs.padding_offset.slice(0, 0, bs * num_tokens_per_bs_);
         // Copy BertEmbeddingInputs from capture_mem_hold_
         inputs.bert_embedding_inputs = capture_mem_hold_.py_model_inputs_.bert_embedding_inputs;
 

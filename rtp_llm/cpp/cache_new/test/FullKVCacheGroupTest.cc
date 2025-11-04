@@ -24,7 +24,7 @@ TEST_F(FullKVCacheGroupTest, NeedBlocksNumTest) {
     auto block_pool = createBlockPool();
     block_pool->init();
 
-    auto spec                = make_shared<KVCacheSpec>();
+    auto spec                = make_shared<MHAKVCacheSpec>();
     spec->seq_size_per_block = 4;
 
     FullKVCacheGroup group1({}, spec, block_pool);

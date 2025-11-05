@@ -62,7 +62,7 @@ TEST_F(CudaSamplerTest, testTopK) {
     check_cuda_error();
 
     // printBuffer<int32_t>(*output_token_ids, "output_token_ids");
-    // printBuffer<float>(*cum_log_probs, "cum_log_probs");
+    // printBuffer<float>(*cum_log_probs, "cum_log_probs")
     auto output_token_ids_host = getBufferValues<int32_t>(*output_token_ids);
     auto cum_log_probs_host    = getBufferValues<float>(*cum_log_probs);
     ASSERT_EQ(output_token_ids_host[5], 5);
